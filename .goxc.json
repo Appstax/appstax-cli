@@ -1,0 +1,7 @@
+{
+    "BuildConstraints": "windows linux,!arm darwin",
+    "ConfigVersion": "0.9",
+    "Resources": {
+        "Exclude": "*.*"
+    }
+}

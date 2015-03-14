@@ -1,0 +1,7 @@
+language: go
+go:
+  - 1.3
+install: ""
+script: "./build.sh XC"
+git:
+  depth: 1

@@ -1,0 +1,6 @@
+github.com/codegangsta/cli              1.2.0
+github.com/mitchellh/go-homedir         7d2d8c8a4e078ce3c58736ab521a40b37a504c52
+github.com/cheggaaa/pb                  0464652af750701d218b6dd035f0217e407caf2d
+github.com/olekukonko/ts                ecf753e7c962639ab5a1fb46f7da627d4c0a04b8
+github.com/howeyc/gopass                62ab5a80502a82291f265e6980d72310b8f480d5
+github.com/skratchdot/open-golang/open  c8748311a7528d0ba7330d302adbc5a677ef9c9e
