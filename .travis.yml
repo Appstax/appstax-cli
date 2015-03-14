@@ -1,7 +1,18 @@
 language: go
 go:
-  - 1.3
-install: ""
-script: "./build.sh XC"
+- 1.3
+install: ''
+script: ./build.sh XC
 git:
   depth: 1
+deploy:
+  - provider: releases
+    api_key:
+      secure: G4OamGe/BPJiCefSadrQKr0x47zBLvlGvCRUh5mF+tMoF/5WpzHWf523d7EIyDNmXVmohyLs5EqyCNxiWg+BklQn1MrbuJOiV5mnfvcEYIkbIlIqrOLejoPbMrm62ykE+6sl8FJ4nqAMFCAQL8jwd683AL8F7CWpaZoaaAuWevU=
+    skip_cleanup: true
+    file: 
+      - '.godeps/bin/appstax-xc/snapshot/appstax_darwin_386.zip'
+      - '.godeps/bin/appstax-xc/snapshot/appstax_linux_386.tar.gz'
+      - '.godeps/bin/appstax-xc/snapshot/appstax_windows_386.zip'
+    on:
+      tags: true
