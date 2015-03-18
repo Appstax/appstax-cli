@@ -10,6 +10,7 @@ import (
 	"appstax-cli/appstax/session"
 	"appstax-cli/appstax/template"
 	"appstax-cli/appstax/term"
+	"errors"
 	"fmt"
 	"github.com/codegangsta/cli"
 	"github.com/skratchdot/open-golang/open"
@@ -108,7 +109,11 @@ func DoInit(c *cli.Context) {
 	useOptions(c)
 	loginIfNeeded()
 
-	app := selectApp()
+	app, err := selectApp()
+	if err != nil {
+		return;
+	}
+
 	tpl := selectTemplate()
 
 	pub := "./public"
@@ -144,12 +149,15 @@ func DoInfo(c *cli.Context) {
 		term.Println("No app configured in current directory. (Missing appstax.conf)")
 	} else {
 		app, err := account.GetCurrentApp()
-		fail.Handle(err)
-		term.Println("App name:    " + app.AppName)
-		term.Println("Description: " + app.AppDescription)
-		term.Println("App key:     " + app.AppKey)
-		term.Println("Hosting:     " + account.FormatHostingUrl(app))
-		term.Section()
+		if err != nil {
+			term.Println("You don't have access to the currently selected app")
+		} else {
+			term.Println("App name:    " + app.AppName)
+			term.Println("Description: " + app.AppDescription)
+			term.Println("App key:     " + app.AppKey)
+			term.Println("Hosting:     " + account.FormatHostingUrl(app))
+			term.Section()
+		}
 	}
 	user, err := account.GetUser()
 	fail.Handle(err)
@@ -271,10 +279,15 @@ func login() {
 	}
 }
 
-func selectApp() account.App {
+func selectApp() (account.App, error) {
 	apps, _ := account.GetUserApps()
 	selected := 0
-	if len(apps) > 1 {
+	if len(apps) == 0 {
+		term.Section()
+		term.Println("You don't have access to any apps!")
+		term.Println("Create one on appstax.com and come back here.")
+		return account.App{}, errors.New("Account has no apps")
+	} else if len(apps) > 1 {
 		term.Section()
 		term.Println("Choose which app app to configure:")
 		for i, app := range apps {
@@ -283,7 +296,7 @@ func selectApp() account.App {
 		term.Section()
 		selected = -1 + term.GetInt(fmt.Sprintf("Please select (1-%d)", len(apps)))
 	}
-	return apps[selected]
+	return apps[selected], nil
 }
 
 func selectTemplate() template.Template {

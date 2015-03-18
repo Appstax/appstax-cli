@@ -87,7 +87,9 @@ func GetAppByKey(appKey string) (App, error) {
 func GetCurrentApp() (App, error) {
 	appKey := config.Read().AppKey
 	app, err := GetAppByKey(appKey)
-	fail.Handle(err)
+	if err != nil {
+		return App{}, err
+	}
 	app, err = GetAppByID(app.AppID)
 	return app, err
 }
