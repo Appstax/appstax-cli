@@ -46,7 +46,7 @@ func All() []Template {
 		          Repository:      "appstax-ios",
 		          SourcePath:      "appstax-ios/StarterProjects/Basic/",
 		          DestinationPath: "./",
-		          AppKeyInFile:    ""},
+		          AppKeyInFile:    "./StarterProject/AppDelegate.m"},
 		Template{ Name:            "none",
 		          Label:           "No template",
 		          Repository:      "",
