@@ -8,11 +8,11 @@ import (
 	"appstax-cli/appstax/hosting"
 	"appstax-cli/appstax/log"
 	"appstax-cli/appstax/session"
+	"appstax-cli/appstax/template"
 	"appstax-cli/appstax/term"
 	"fmt"
 	"github.com/codegangsta/cli"
 	"github.com/skratchdot/open-golang/open"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"os/signal"
@@ -107,12 +107,33 @@ func setupSignals() {
 func DoInit(c *cli.Context) {
 	useOptions(c)
 	loginIfNeeded()
+
 	app := selectApp()
-	pub := selectPublicDir()
+	tpl := selectTemplate()
+
+	pub := "./public"
+	if tpl.Name == "none" {
+		term.Section()
+		pub = selectPublicDir()
+	}
 	writeConfig(app, pub)
-	selectSubdomain(app.AppID)
-	createPublicDir()
+
+	if !strings.HasPrefix(tpl.Name, "ios/") {
+		createPublicDir()	
+	}
+	
+	if tpl.Name != "none" {
+		term.Section()
+		term.Println("Setting up template... ")
+		template.Install(tpl)
+		term.Println("Done.")
+	}
+
 	term.Section()
+	selectSubdomain(app.AppID)
+
+	term.Section()
+	term.Println("All done!")
 	term.Println("Now run 'appstax deploy' when you are ready to upload your public files.")
 }
 
@@ -260,9 +281,27 @@ func selectApp() account.App {
 			term.Printf("  %d) %s\n", i+1, app.AppName)
 		}
 		term.Section()
-		selected = -1 + term.GetInt(fmt.Sprintf("Please select app (1-%d)", len(apps)))
+		selected = -1 + term.GetInt(fmt.Sprintf("Please select (1-%d)", len(apps)))
 	}
 	return apps[selected]
+}
+
+func selectTemplate() template.Template {
+	templates := template.All()
+
+	term.Section()
+	term.Println("Choose a template for you app:")
+	for i, template := range templates {
+		term.Printf("  %d) %s\n", i+1, template.Label)
+	}
+
+	term.Section()
+	for {
+		selected := -1 + term.GetInt(fmt.Sprintf("Please select (1-%d)", len(templates)))
+		if selected >= 0 && selected < len(templates) {
+			return templates[selected]
+		}
+	}
 }
 
 func selectPublicDir() string {
@@ -277,7 +316,7 @@ func selectSubdomain(appID string) {
 	app, _ := account.GetAppByID(appID)
 	log.Debugf("Subdomain app: %v", app)
 	for {
-		app.HostingSubdomain = term.GetString("Choose a *.appstax.io subdomain")
+		app.HostingSubdomain = term.GetString("Choose a *.appstax.io subdomain for web hosting")
 		err1 := account.SaveApp(app)
 		if err1 != nil {
 			term.Println(err1.Error())
@@ -298,7 +337,6 @@ func createPublicDir() {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		err = os.MkdirAll(dir, 0700)
 		fail.Handle(err)
-		ioutil.WriteFile(dir+"/index.html", []byte("<!DOCTYPE html>\n<h1>Your hosting is up and running</h1>\n<p>Now go make something amazing!</p>"), 0644)
 		log.Debugf("Created public directory '%s'", dir)
 	} else {
 		log.Debugf("Not creating public directory. '%s' already exists.", dir)
