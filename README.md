@@ -1,10 +1,5 @@
 
 
-### Pre-release note
-
-Please note that this repository contains pre-release software, and cannot be used until the Appstax services are officially released. Want beta access? [Send us an email](ea@appstax.com) to request an early access code.
-
-
 Appstax CLI 
 ===========
 
