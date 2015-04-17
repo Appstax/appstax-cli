@@ -33,7 +33,7 @@ func setupCommands() *cli.App {
 	app := cli.NewApp()
 	app.Name = "appstax"
 	app.Usage = "command line interface for appstax.com"
-	app.Version = "0.9.2"
+	app.Version = "1.0.0"
 
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
