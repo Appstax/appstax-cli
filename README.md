@@ -14,10 +14,10 @@ Installing
 **On windows**, place `appstax.exe` in `c:\Windows\System32` or any custom `PATH` you have configured in your environment variables.
 
 **Quick install on Mac OSX:**, install the latest version from the terminal:  
-`curl -s http://appstax.com/download/cli/install_osx.sh | sudo /bin/bash`
+`curl -s https://appstax.com/download/cli/install_osx.sh | sudo /bin/bash`
 
 **Quick install on Linux:**  
-`curl -s http://appstax.com/download/cli/install_linux.sh | sudo /bin/bash`
+`curl -s https://appstax.com/download/cli/install_linux.sh | sudo /bin/bash`
 
 
 Command overview
