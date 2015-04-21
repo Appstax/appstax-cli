@@ -41,7 +41,7 @@ func Signup(firstName, lastName, email, password string) (sessionID string, user
 	data := map[string]interface{}{
 		"firstName": firstName,
 		"lastName":  lastName,
-		"email":     email, 
+		"email":     email,
 		"password":  password,
 	}
 	result, resp, err := apiclient.Post(apiclient.Url("/appstax/users"), data)

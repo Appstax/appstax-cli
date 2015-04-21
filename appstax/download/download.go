@@ -10,9 +10,9 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"io"
 	"io/ioutil"
-	"path/filepath"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 func DownloadLatestRelease(repository string) string {
@@ -29,13 +29,13 @@ func DownloadLatestRelease(repository string) string {
 	log.Debugf("Latest release: %s", version)
 
 	path := dir() + repository + "/" + version + "/"
-	
+
 	if _, err := os.Stat(path); err == nil {
 		log.Debugf("Release already downloaded at %s", path)
 		return path
 	}
 
-	asset, err := getAssetByName(latest, repository + ".zip")
+	asset, err := getAssetByName(latest, repository+".zip")
 	fail.Handle(err)
 
 	err = DownloadAndUnzip(*asset.BrowserDownloadURL, path)
@@ -46,7 +46,7 @@ func DownloadLatestRelease(repository string) string {
 
 func DownloadAndUnzip(remoteUrl string, localPath string) error {
 	log.Debugf("Downloading %s to %s", remoteUrl, localPath)
-	
+
 	tmp, err := download(remoteUrl)
 	if err != nil {
 		return err
@@ -58,7 +58,7 @@ func DownloadAndUnzip(remoteUrl string, localPath string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 
@@ -74,7 +74,7 @@ func download(url string) (path string, err error) {
 	if err != nil {
 		return "", err
 	}
-	
+
 	_, err = io.Copy(tmp, resp.Body)
 	if err != nil {
 		return "", err
