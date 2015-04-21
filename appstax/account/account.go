@@ -37,6 +37,23 @@ func Login(email string, password string) (sessionID string, userID string, acco
 	}
 }
 
+func Signup(firstName, lastName, email, password string) (sessionID string, userID string, accountID string, err error) {
+	data := map[string]interface{}{
+		"firstName": firstName,
+		"lastName":  lastName,
+		"email":     email, 
+		"password":  password,
+	}
+	result, resp, err := apiclient.Post(apiclient.Url("/appstax/users"), data)
+	if err != nil {
+		return "", "", "", err
+	} else {
+		resultMap := apiclient.ParseStringMap(result)
+		log.Debugf("Signup result: %v", resultMap)
+		return resp.Header.Get("x-appstax-sessionid"), resultMap["userId"], resultMap["accountId"], nil
+	}
+}
+
 func GetUser() (User, error) {
 	userID := session.ReadUserID()
 	result, _, _ := apiclient.Get(apiclient.Url("/appstax/users/" + userID))

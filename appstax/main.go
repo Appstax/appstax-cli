@@ -48,6 +48,12 @@ func setupCommands() *cli.App {
 
 	app.Commands = []cli.Command{
 		{
+			Name:   "signup",
+			Usage:  "Create new account",
+			Action: DoSignup,
+			Flags:  app.Flags,
+		},
+		{
 			Name:   "login",
 			Usage:  "Login",
 			Action: DoLogin,
@@ -167,6 +173,29 @@ func DoInfo(c *cli.Context) {
 func DoLogin(c *cli.Context) {
 	useOptions(c)
 	login()
+}
+
+func DoSignup(c *cli.Context) {
+	useOptions(c)
+	term.Println("By signing up you agree to our terms of service:")
+	term.Println("https://appstax.com/admin/#/tos")
+	term.Section()
+	for {
+		firstName := term.GetString("First name")
+		lastName  := term.GetString("Last name")
+		email     := term.GetString("Email")
+		password  := term.GetPassword("Password")
+		sessionID, userID, accountID, err := account.Signup(firstName, lastName, email, password)
+		if err != nil {
+			term.Section()
+			term.Println(err.Error())
+		} else {
+			writeSession(sessionID, userID, accountID)
+			term.Section()
+			term.Println(fmt.Sprintf("Account created for '%s'", email))
+			return
+		}
+	}
 }
 
 func DoDeploy(c *cli.Context) {
@@ -289,7 +318,7 @@ func selectApp() (account.App, error) {
 		return account.App{}, errors.New("Account has no apps")
 	} else if len(apps) > 1 {
 		term.Section()
-		term.Println("Choose which app app to configure:")
+		term.Println("Choose which app to configure:")
 		for i, app := range apps {
 			term.Printf("  %d) %s\n", i+1, app.AppName)
 		}

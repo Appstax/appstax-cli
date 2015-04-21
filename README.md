@@ -30,6 +30,7 @@ appstax info     # Info about app configured in current directory
 appstax open     # Open your browser to the specified destination
 appstax login    # Log in (also done automatically from other commands)
 appstax logout   # Log out
+appstax signup   # Create new account
 appstax serve    # Run development http server on localhost:9000
 ```
 
