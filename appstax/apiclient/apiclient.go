@@ -116,7 +116,7 @@ func handleResult(resp *http.Response, err error) ([]byte, *http.Response, error
 }
 
 func getErrorMessage(resp *http.Response, body []byte, err error) string {
-	message := ParseStringMap(body)["ErrorMessage"]
+	message := ParseStringMap(body)["errorMessage"]
 
 	if err != nil {
 		message = err.Error()
