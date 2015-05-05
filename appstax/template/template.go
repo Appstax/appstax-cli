@@ -32,9 +32,16 @@ func All() []Template {
 			AppKeyInFile:    "./public/app.js"},
 		Template{
 			Name:            "js/angular",
-			Label:           "JavaScript: Angular.js project",
+			Label:           "JavaScript: Basic angular.js project",
 			Repository:      "appstax-js",
 			SourcePath:      "appstax-js/starterprojects/angular/",
+			DestinationPath: "./",
+			AppKeyInFile:    "./app/modules/app.js"},
+		Template{
+			Name:            "js/angular",
+			Label:           "JavaScript: Full angular.js project",
+			Repository:      "appstax-js",
+			SourcePath:      "appstax-js/starterprojects/angular-full/",
 			DestinationPath: "./",
 			AppKeyInFile:    "./app/modules/app.js"},
 		Template{
