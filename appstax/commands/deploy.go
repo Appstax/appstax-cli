@@ -14,6 +14,7 @@ func DoDeploy(c *cli.Context) {
 		return
 	}
 	loginIfNeeded()
+	selectSubdomainIfNeeded()
 	dir := config.Read().PublicDir
 	term.Println("Packaging files for upload...")
 	archive, bytes := hosting.PrepareArchive(dir)

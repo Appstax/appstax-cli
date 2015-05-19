@@ -122,6 +122,14 @@ func selectPublicDir() string {
 	return dir
 }
 
+func selectSubdomainIfNeeded() {
+	app, err := account.GetCurrentApp()
+	fail.Handle(err)
+	if app.HostingSubdomain == "" {
+		selectSubdomain(app.AppID)
+	}
+}
+
 func selectSubdomain(appID string) {
 	app, _ := account.GetAppByID(appID)
 	log.Debugf("Subdomain app: %v", app)
