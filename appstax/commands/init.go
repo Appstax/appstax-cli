@@ -53,20 +53,22 @@ func DoInit(c *cli.Context) {
 
 func selectApp() (account.App, error) {
 	apps, _ := account.GetUserApps()
-	selected := 0
+	selected := -1
 	if len(apps) == 0 {
 		term.Section()
 		term.Println("You don't have access to any apps!")
 		term.Println("Create one on appstax.com and come back here.")
 		return account.App{}, errors.New("Account has no apps")
-	} else if len(apps) > 1 {
+	} else {
 		term.Section()
 		term.Println("Choose which app to configure:")
 		for i, app := range apps {
 			term.Printf("  %d) %s\n", i+1, app.AppName)
 		}
 		term.Section()
-		selected = -1 + term.GetInt(fmt.Sprintf("Please select (1-%d)", len(apps)))
+		for selected < 0 || selected >= len(apps) {
+			selected = -1 + term.GetInt(fmt.Sprintf("Please select (1-%d)", len(apps)))
+		}
 	}
 	return apps[selected], nil
 }
