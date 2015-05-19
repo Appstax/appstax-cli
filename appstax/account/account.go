@@ -18,11 +18,13 @@ type User struct {
 }
 
 type App struct {
-	AppID            string `json:"appID"`
-	AppKey           string `json:"appKey"`
+	AppID            string `json:"appID,omitempty"`
+	AppKey           string `json:"appKey,omitempty"`
 	AppName          string `json:"appName"`
 	AppDescription   string `json:"appDescription"`
-	HostingSubdomain string `json:"hostingSubdomain"`
+	AccountID        string `json:"accountId"`
+	PaymentPlan      string `json:"paymentPlan"`
+	HostingSubdomain string `json:"hostingSubdomain,omitempty"`
 }
 
 func Login(email string, password string) (sessionID string, userID string, accountID string, err error) {
@@ -114,6 +116,21 @@ func GetCurrentApp() (App, error) {
 func SaveApp(app App) error {
 	_, _, err := apiclient.Put(apiclient.Url("/appstax/apps/"+app.AppID), app)
 	return err
+}
+
+func SaveNewApp(app App) (App, error) {
+	result, _, err := apiclient.Post(apiclient.Url("/appstax/apps"), app)
+	if err != nil {
+		return App{}, err
+	}
+
+	var data map[string]string
+	err = json.Unmarshal(result, &data)
+	if err != nil {
+		return App{}, err
+	}
+	
+	return GetAppByID(data["appId"])
 }
 
 func AddCorsOrigin(appID string, origin string) error {

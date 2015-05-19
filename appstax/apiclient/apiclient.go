@@ -63,7 +63,11 @@ func Post(url string, data interface{}) ([]byte, *http.Response, error) {
 	log.Debugf("HTTP POST: %s", url)
 	json, err := json.Marshal(data)
 	fail.Handle(err)
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(json))
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(json))
+	req.Header.Add("x-appstax-sessionid", session.ReadSessionID())
+	req.Header.Add("x-appstax-appkey", config.Read().AppKey)
+	resp, err := client.Do(req)
 	fail.Handle(err)
 	return handleResult(resp, err)
 }
