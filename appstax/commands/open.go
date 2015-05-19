@@ -17,6 +17,7 @@ func DoOpen(c *cli.Context) {
 
 	switch dest {
 
+	default: fallthrough
 	case "deployed":
 		app, err := account.GetCurrentApp()
 		if err != nil {
