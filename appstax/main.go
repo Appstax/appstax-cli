@@ -86,6 +86,12 @@ func setupCli() *cli.App {
 			Action: commands.DoServe,
 			Flags:  app.Flags,
 		},
+		{
+			Name:   "collection",
+			Usage:  "Create and view collections",
+			Action: commands.DoCollection,
+			Flags:  app.Flags,
+		},
 	}
 
 	return app

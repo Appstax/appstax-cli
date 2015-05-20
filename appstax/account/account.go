@@ -18,13 +18,30 @@ type User struct {
 }
 
 type App struct {
-	AppID            string `json:"appID,omitempty"`
-	AppKey           string `json:"appKey,omitempty"`
-	AppName          string `json:"appName"`
-	AppDescription   string `json:"appDescription"`
-	AccountID        string `json:"accountId"`
-	PaymentPlan      string `json:"paymentPlan"`
-	HostingSubdomain string `json:"hostingSubdomain,omitempty"`
+	AppID            string       `json:"appID,omitempty"`
+	AppKey           string       `json:"appKey,omitempty"`
+	AppName          string       `json:"appName"`
+	AppDescription   string       `json:"appDescription"`
+	AccountID        string       `json:"accountId"`
+	PaymentPlan      string       `json:"paymentPlan"`
+	HostingSubdomain string       `json:"hostingSubdomain,omitempty"`
+	Collections      []Collection `json:"collections,omitempty"`
+}
+
+type Collection struct {
+	CollectionID   string                 `json:"collectionId,omitempty"`
+	AppID          string                 `json:"appId"`
+	AccountID      string                 `json:"accountId"`
+	CollectionName string                 `json:"collectionName"`
+	Schema         map[string]interface{} `json:"schema"`
+}
+
+func (app App) CollectionNames() []string {
+	names := make([]string, 0)
+	for _, collection := range app.Collections {
+		names = append(names, collection.CollectionName)
+	}
+	return names
 }
 
 func Login(email string, password string) (sessionID string, userID string, accountID string, err error) {
@@ -131,6 +148,42 @@ func SaveNewApp(app App) (App, error) {
 	}
 	
 	return GetAppByID(data["appId"])
+}
+
+func SaveNewCollection(collection Collection) (Collection, error) {
+	result, _, err := apiclient.Post(apiclient.Url("/appstax/collections"), collection)
+	if err != nil {
+		return collection, err
+	}
+
+	err = json.Unmarshal(result, &collection)
+	if err != nil {
+		return collection, err
+	}
+
+	return GetCollectionByID(collection.CollectionID)
+}
+
+func GetCollectionByID(id string) (Collection, error) {
+	var collection Collection
+
+	result, _, err := apiclient.Get(apiclient.Url("/appstax/collections/"+id))
+	if err != nil {
+		return collection, err
+	}
+
+	err = json.Unmarshal(result, &collection)
+	return collection, err
+}
+
+func GetCollectionByName(name string) (Collection, error) {
+	app, _ := GetCurrentApp()
+	for _, collection := range app.Collections {
+		if collection.CollectionName == name {
+			return collection, nil
+		}
+	}
+	return Collection{}, errors.New("Collection not found")
 }
 
 func AddCorsOrigin(appID string, origin string) error {

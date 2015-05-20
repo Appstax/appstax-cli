@@ -6,6 +6,7 @@ import (
 	"appstax-cli/appstax/fail"
 	"appstax-cli/appstax/term"
 	"github.com/codegangsta/cli"
+	"strings"
 )
 
 func DoInfo(c *cli.Context) {
@@ -21,6 +22,7 @@ func DoInfo(c *cli.Context) {
 			term.Println("App name:    " + app.AppName)
 			term.Println("Description: " + app.AppDescription)
 			term.Println("App key:     " + app.AppKey)
+			term.Println("Collections: " + strings.Join(app.CollectionNames(), ", "))
 			term.Println("Hosting:     " + account.FormatHostingUrl(app))
 			term.Section()
 		}
