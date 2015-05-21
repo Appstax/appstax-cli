@@ -44,7 +44,7 @@ func DoInit(c *cli.Context) {
 	}
 
 	term.Section()
-	selectSubdomain(app.AppID)
+	selectSubdomain(app.AppID, false)
 
 	term.Section()
 	term.Println("All done!")
@@ -126,25 +126,36 @@ func selectSubdomainIfNeeded() {
 	app, err := account.GetCurrentApp()
 	fail.Handle(err)
 	if app.HostingSubdomain == "" {
-		selectSubdomain(app.AppID)
+		selectSubdomain(app.AppID, true)
 	}
 }
 
-func selectSubdomain(appID string) {
+func selectSubdomain(appID string, required bool) {
 	app, _ := account.GetAppByID(appID)
 	log.Debugf("Subdomain app: %v", app)
 	for {
-		app.HostingSubdomain = term.GetString("Choose a *.appstax.io subdomain for web hosting")
-		err1 := account.SaveApp(app)
-		if err1 != nil {
-			term.Println(err1.Error())
+		if required {
+			app.HostingSubdomain = term.GetString("Choose a *.appstax.io subdomain for web hosting")
+		} else {
+			term.Println("Choose a *.appstax.io subdomain for web hosting:")
+			term.Println("(Leave this blank if you wish to decide this later.)")
+			app.HostingSubdomain = term.GetString("Subdomain")
 		}
-		err2 := account.AddCorsOrigin(appID, fmt.Sprintf("http://%s.appstax.io", app.HostingSubdomain))
-		if err2 != nil {
-			term.Println(err2.Error())
-		}
-		if err1 == nil && err2 == nil {
-			term.Printf("Successfully configured %s.appstax.io\n", app.HostingSubdomain)
+
+		if app.HostingSubdomain != "" {
+			err1 := account.SaveApp(app)
+			if err1 != nil {
+				term.Println(err1.Error())
+			}
+			err2 := account.AddCorsOrigin(appID, fmt.Sprintf("http://%s.appstax.io", app.HostingSubdomain))
+			if err2 != nil {
+				term.Println(err2.Error())
+			}
+			if err1 == nil && err2 == nil {
+				term.Printf("Successfully configured %s.appstax.io\n", app.HostingSubdomain)
+				return
+			}
+		} else if !required {
 			return
 		}
 	}
