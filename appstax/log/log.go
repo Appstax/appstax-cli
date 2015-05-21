@@ -1,11 +1,17 @@
 package log
 
 import (
+	"github.com/mitchellh/go-homedir"
 	"fmt"
 	"os"
 )
 
 var stdoutEnabled = false
+var path = "appstax.log"
+
+func Path() string {
+	return path
+}
 
 func SetStdoutEnabled(e bool) {
 	stdoutEnabled = e
@@ -46,5 +52,11 @@ func writeToFile(line string) {
 }
 
 func openFile() (*os.File, error) {
-	return os.OpenFile("appstax.log", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+	if path == "appstax.log" {
+		home, err := homedir.Dir()
+		if err == nil {
+			path = home + "/.appstax/appstax.log"			
+		}
+	}
+	return os.OpenFile(path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 }

@@ -20,7 +20,7 @@ func Handle(err error) {
 			panic(err)
 		} else {
 			log.Panicf(err.Error())
-			println("\nSomething went wrong! See appstax.log for details.")
+			println("\nSomething went wrong! See " + log.Path() + " for details.")
 			os.Exit(-1)
 		}
 	}
