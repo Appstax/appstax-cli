@@ -23,7 +23,7 @@ go install appstax-cli/appstax || exit 1
 if [ "$1" = "XC" ]; then
 	echo "Cross-compiling"
 	go get github.com/laher/goxc
-    $GOPATH/bin/goxc -t -wd=appstax xc
+    $GOPATH/bin/goxc -t -wd=appstax xc package
 
     rm -rf .godeps/bin/appstax-xc/snapshot/.goxc-temp
     rm -rf .godeps/bin/appstax-xc/snapshot/downloads.md
