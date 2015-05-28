@@ -24,7 +24,7 @@ func setupCli() *cli.App {
 	app := cli.NewApp()
 	app.Name = "appstax"
 	app.Usage = "command line interface for appstax.com"
-	app.Version = "1.0.2"
+	app.Version = "1.0.3"
 
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
