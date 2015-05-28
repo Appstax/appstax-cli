@@ -24,14 +24,15 @@ Command overview
 ----------------
 
 ```bash
-appstax init     # Initialize current directory as an appstax app
-appstax deploy   # Deploy local files to <yourapp>.appstax.io
-appstax info     # Info about app configured in current directory
-appstax open     # Open your browser to the specified destination
-appstax login    # Log in (also done automatically from other commands)
-appstax logout   # Log out
-appstax signup   # Create new account
-appstax serve    # Run development http server on localhost:9000
+appstax init        # Initialize current directory as an appstax app
+appstax deploy      # Deploy local files to <yourapp>.appstax.io
+appstax info        # Info about app configured in current directory
+appstax open        # Open your browser to the specified destination
+appstax login       # Log in (also done automatically from other commands)
+appstax logout      # Log out
+appstax signup      # Create new account
+appstax serve       # Run development http server on localhost:9000
+appstax collection  # Create and view collections
 ```
 
 You can also type `appstax help` to see a list of available commands.
