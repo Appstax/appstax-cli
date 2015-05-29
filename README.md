@@ -33,6 +33,7 @@ appstax logout      # Log out
 appstax signup      # Create new account
 appstax serve       # Run development http server on localhost:9000
 appstax collection  # Create and view collections
+appstax find        # Show objects from a collection
 ```
 
 You can also type `appstax help` to see a list of available commands.

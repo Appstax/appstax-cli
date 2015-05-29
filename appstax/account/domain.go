@@ -1,5 +1,10 @@
 package account
 
+import (
+	"sort"
+	"strings"
+)
+
 type User struct {
 	Email     string `json:"email"`
 	FirstName string `json:"firstName"`
@@ -32,4 +37,26 @@ func (app App) CollectionNames() []string {
 		names = append(names, collection.CollectionName)
 	}
 	return names
+}
+
+func (coll Collection) SortedColumnNames() []string {
+	names := make([]string, 0)
+	for k, _ := range coll.Schema["properties"].(map[string]interface{}) {
+		names = append(names, k)
+	}
+	sorted     := make([]string, 0)
+	sys := make([]string, 0)
+	dev := make([]string, 0)
+	for _, name := range names {
+		if strings.HasPrefix(name, "sys") {
+			sys = append(sys, name)
+		} else {
+			dev = append(dev, name)
+		}
+	}
+	sort.Strings(sys)
+	sort.Strings(dev)
+	sorted = append(sorted, dev...)
+	sorted = append(sorted, sys...)
+	return sorted
 }

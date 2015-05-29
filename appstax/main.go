@@ -92,6 +92,12 @@ func setupCli() *cli.App {
 			Action: commands.DoCollection,
 			Flags:  app.Flags,
 		},
+		{
+			Name:   "find",
+			Usage:  "Get objects from a collection",
+			Action: commands.DoFind,
+			Flags:  app.Flags,
+		},
 	}
 
 	return app

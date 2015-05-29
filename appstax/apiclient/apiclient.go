@@ -9,9 +9,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
+	neturl "net/url"
 	"os"
 )
 
@@ -36,7 +38,12 @@ func selectBaseUrl() string {
 	return url
 }
 
-func Url(url string) string {
+func Url(url string, params ...string) string {
+	encodedParams := make([]interface{}, len(params))
+	for i, p := range params {
+		encodedParams[i] = neturl.QueryEscape(p)
+	}
+	url = fmt.Sprintf(url, encodedParams...)
 	return selectBaseUrl() + url
 }
 
@@ -51,8 +58,7 @@ func PostFile(url string, path string, progressWriter io.Writer) ([]byte, *http.
 
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, teeReader)
-	req.Header.Add("x-appstax-sessionid", session.ReadSessionID())
-	req.Header.Add("x-appstax-appkey", config.Read().AppKey)
+	addHeaders(req)
 
 	resp, err := client.Do(req)
 	fail.Handle(err)
@@ -65,8 +71,7 @@ func Post(url string, data interface{}) ([]byte, *http.Response, error) {
 	fail.Handle(err)
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(json))
-	req.Header.Add("x-appstax-sessionid", session.ReadSessionID())
-	req.Header.Add("x-appstax-appkey", config.Read().AppKey)
+	addHeaders(req)
 	resp, err := client.Do(req)
 	fail.Handle(err)
 	return handleResult(resp, err)
@@ -79,8 +84,7 @@ func Put(url string, data interface{}) ([]byte, *http.Response, error) {
 	log.Debugf("HTTP PUT JSON: %s", json)
 	client := &http.Client{}
 	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(json))
-	req.Header.Add("x-appstax-sessionid", session.ReadSessionID())
-	req.Header.Add("x-appstax-appkey", config.Read().AppKey)
+	addHeaders(req)
 	resp, err := client.Do(req)
 	fail.Handle(err)
 	return handleResult(resp, err)
@@ -90,7 +94,7 @@ func Get(url string) ([]byte, *http.Response, error) {
 	log.Debugf("HTTP GET: %s", url)
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
-	req.Header.Add("x-appstax-sessionid", session.ReadSessionID())
+	addHeaders(req)
 	resp, err := client.Do(req)
 	fail.Handle(err)
 	return handleResult(resp, err)
@@ -106,6 +110,18 @@ func ParseMap(data []byte) map[string]interface{} {
 	var result map[string]interface{}
 	json.Unmarshal(data, &result)
 	return result
+}
+
+func addHeaders(req *http.Request) {
+	sessionID := session.ReadSessionID()
+	appKey := config.Read().AppKey
+	
+	if sessionID != "" {
+		req.Header.Add("x-appstax-sessionid", session.ReadSessionID())
+	}
+	if appKey != "" {
+		req.Header.Add("x-appstax-appkey", config.Read().AppKey)
+	}
 }
 
 func handleResult(resp *http.Response, err error) ([]byte, *http.Response, error) {

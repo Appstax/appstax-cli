@@ -149,7 +149,21 @@ func GetCollectionByName(name string) (Collection, error) {
 			return collection, nil
 		}
 	}
-	return Collection{}, errors.New("Collection not found")
+	return Collection{}, errors.New("Collection '" + name + "' not found")
+}
+
+func GetObjects(collection, filter string) ([]map[string]interface{}, error) {
+	objects := make([]map[string]interface{}, 0)
+	
+	url := apiclient.Url("/objects/%s?filter=%s", collection, filter)
+	result, _, err := apiclient.Get(url)
+	if err != nil {
+		return objects, err
+	}
+
+	tmp := make(map[string][]map[string]interface{})
+	err = json.Unmarshal(result, &tmp)
+	return tmp["objects"], err
 }
 
 func AddCorsOrigin(appID string, origin string) error {
