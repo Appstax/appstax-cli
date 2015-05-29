@@ -166,6 +166,27 @@ func GetObjects(collection, filter string) ([]map[string]interface{}, error) {
 	return tmp["objects"], err
 }
 
+func SaveNewRelation(relation Relation) (Relation, error) {
+	app, err := GetCurrentApp()
+	if err != nil {
+		return relation, err
+	}
+
+	result, _, err := apiclient.Post(apiclient.Url("/appstax/apps/%s/relations", app.AppID), relation)
+	if err != nil {
+		return relation, err
+	}
+
+	newRelation := Relation{}
+	err = json.Unmarshal(result, &newRelation)
+	if err != nil {
+		return relation, err
+	}
+
+	relation.RelationID = newRelation.RelationID
+	return relation, nil
+}
+
 func AddCorsOrigin(appID string, origin string) error {
 	origins := GetCorsOrigins(appID)
 	log.Debugf("Existing CORS origins for app %s: %v", appID, origins)

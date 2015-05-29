@@ -117,10 +117,10 @@ func addHeaders(req *http.Request) {
 	appKey := config.Read().AppKey
 	
 	if sessionID != "" {
-		req.Header.Add("x-appstax-sessionid", session.ReadSessionID())
+		req.Header.Add("x-appstax-sessionid", sessionID)
 	}
 	if appKey != "" {
-		req.Header.Add("x-appstax-appkey", config.Read().AppKey)
+		req.Header.Add("x-appstax-appkey", appKey)
 	}
 }
 

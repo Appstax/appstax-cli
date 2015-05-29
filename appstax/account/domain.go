@@ -1,6 +1,7 @@
 package account
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 )
@@ -31,6 +32,14 @@ type Collection struct {
 	Schema         map[string]interface{} `json:"schema"`
 }
 
+type Relation struct {
+	RelationID         string `json:"relationId,omitempty"`
+	FromCollectionName string `json:"fromCollectionName"`
+	FromProperty       string `json:"fromProperty"`
+	ToCollectionName   string `json:"toCollectionName"`
+	Type               string `json:"type"`
+}
+
 func (app App) CollectionNames() []string {
 	names := make([]string, 0)
 	for _, collection := range app.Collections {
@@ -59,4 +68,8 @@ func (coll Collection) SortedColumnNames() []string {
 	sorted = append(sorted, dev...)
 	sorted = append(sorted, sys...)
 	return sorted
+}
+
+func (rel Relation) Description() string {
+	return fmt.Sprintf("%s relation '%s' from collection %s to %s", rel.Type, rel.FromProperty, rel.FromCollectionName, rel.ToCollectionName)
 }

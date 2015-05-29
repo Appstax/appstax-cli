@@ -98,6 +98,12 @@ func setupCli() *cli.App {
 			Action: commands.DoFind,
 			Flags:  app.Flags,
 		},
+		{
+			Name:   "relation",
+			Usage:  "Create and view relations",
+			Action: commands.DoRelation,
+			Flags:  app.Flags,
+		},
 	}
 
 	return app
