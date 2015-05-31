@@ -4,6 +4,7 @@ import (
 	"appstax-cli/appstax/account"
 	"appstax-cli/appstax/term"
 	"github.com/codegangsta/cli"
+	"fmt"
 	"strconv"
 )
 
@@ -64,6 +65,13 @@ func propertyAsString(property interface{}) string {
 			if filename, ok := mapValue["filename"].(string); ok {
 				return filename
 			}
+		} else if ok && dataType == "relation" {
+			objects, _    := mapValue["sysObjects"].([]interface{})
+			collection, _ := mapValue["sysCollection"].(string)
+			if collection == "" {
+				collection = "objects"
+			}
+			return fmt.Sprintf("(%d %s)", len(objects), collection)
 		}
 	}
 	return ""
