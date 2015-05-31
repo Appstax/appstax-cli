@@ -2,6 +2,7 @@ package commands
 
 import (
 	"appstax-cli/appstax/account"
+	"appstax-cli/appstax/log"
 	"appstax-cli/appstax/session"
 	"appstax-cli/appstax/term"
 	"github.com/codegangsta/cli"
@@ -43,26 +44,33 @@ func showCollectionInfo(collection account.Collection) {
 	properties := collection.Schema["properties"].(map[string]interface{})
 	for pname, property := range properties {
 		if !strings.HasPrefix(pname, "sys") {
-			ptype := typeForSchemaProperty(property.(map[string]interface{}))
+			ptype := typeForSchemaProperty(pname, property)
 			term.Printf("%s:%s\n", pname, ptype)
 		}
 	}
 	for pname, property := range properties {
 		if strings.HasPrefix(pname, "sys") {
-			ptype := typeForSchemaProperty(property.(map[string]interface{}))
+			ptype := typeForSchemaProperty(pname, property)
 			term.Printf("%s:%s\n", pname, ptype)
 		}
 	}
 }
 
-func typeForSchemaProperty(property map[string]interface{}) string {
-	ptype := property["type"].(string)
-	if ptype == "object" {
-		details := property["properties"].(map[string]interface{})
-		sysDatatype := details["sysDatatype"].(map[string]interface{})["pattern"].(string)
-		if sysDatatype != "" {
-			ptype = sysDatatype
+func typeForSchemaProperty(pname string, p interface{}) string {
+	ptype := "unknown"
+	if property, ok := p.(map[string]interface{}); ok {
+		ptype = property["type"].(string)
+		if ptype == "object" {
+			details := property["properties"].(map[string]interface{})
+			if sysDatatype, ok := details["sysDatatype"].(map[string]interface{}); ok {
+				ptype = sysDatatype["pattern"].(string)
+			} else if _, ok := details["sysRelationChanges"].(map[string]interface{}); ok {
+				ptype = "relation"
+			}
 		}
+	}
+	if ptype == "unknown" {
+		log.Warnf("Unrecognized schema for property '%s': %v. Type is %T", pname, p, p)
 	}
 	return ptype
 }

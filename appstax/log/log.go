@@ -28,6 +28,10 @@ func Debugf(format string, a ...interface{}) {
 	write(fmt.Sprintf("[DEBUG] "+format, a...))
 }
 
+func Warnf(format string, a ...interface{}) {
+	write(fmt.Sprintf("[WARN] "+format, a...))
+}
+
 func Panicf(format string, a ...interface{}) {
 	write(fmt.Sprintf("[PANIC] "+format, a...))
 }
