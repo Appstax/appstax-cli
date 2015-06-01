@@ -58,7 +58,7 @@ func Delete() {
 func dir() string {
 	home, err := homedir.Dir()
 	fail.Handle(err)
-	dir := home + "/.appstax/session/"
+	dir := home + "/.appstax/session"
 	err = os.MkdirAll(dir, 0700)
 	fail.Handle(err)
 	return dir
