@@ -5,4 +5,4 @@ github.com/olekukonko/ts                ecf753e7c962639ab5a1fb46f7da627d4c0a04b8
 github.com/howeyc/gopass                62ab5a80502a82291f265e6980d72310b8f480d5
 github.com/skratchdot/open-golang/open  c8748311a7528d0ba7330d302adbc5a677ef9c9e
 github.com/google/go-github/github      2431923100d4989611dcc339f1ff8d280bd9c84c
-github.com/olekukonko/tablewriter       1805332a9a6612da6603ccfdd99a036afb89cec6
+github.com/keronsen/tablewriter         33df7fa14abf9bd2c5f95cc71f46ac2aea666524

@@ -10,7 +10,7 @@ import (
 	"appstax-cli/appstax/log"
 	"github.com/cheggaaa/pb"
 	"github.com/howeyc/gopass"
-	"github.com/olekukonko/tablewriter"
+	"github.com/keronsen/tablewriter"
 )
 
 const indent = "   "
@@ -42,6 +42,7 @@ func Printf(format string, a ...interface{}) {
 func PrintTable(headers []string, rows [][]string) {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetAutoFormatHeaders(false)
 	table.SetHeader(headers)
 	table.AppendBulk(rows)
 	table.Render()
