@@ -58,7 +58,8 @@ func addAllToArchive(fullRootPath string, tarWriter *tar.Writer) {
 }
 
 func addFileToArchive(filePath string, addPath string, tarWriter *tar.Writer, fileInfo os.FileInfo) {
-	log.Debugf("Adding file %s", addPath)
+	addPath = filepath.ToSlash(addPath)
+	log.Debugf("Adding file %s from %s", addPath, filePath)
 	fileReader, err := os.Open(filePath)
 	fail.Handle(err)
 	defer fileReader.Close()
