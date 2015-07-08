@@ -3,6 +3,7 @@ package hosting
 import (
 	"appstax-cli/appstax/apiclient"
 	"appstax-cli/appstax/fail"
+	"appstax-cli/appstax/log"
 	"archive/tar"
 	"bufio"
 	"compress/gzip"
@@ -44,17 +45,20 @@ func PrepareArchive(rootPath string) (string, int64) {
 }
 
 func addAllToArchive(fullRootPath string, tarWriter *tar.Writer) {
+	log.Debugf("Creating archive by walking from root path %s", fullRootPath)
 	filepath.Walk(fullRootPath, func(path string, fileInfo os.FileInfo, err error) error {
 		fail.Handle(err)
 		if !fileInfo.IsDir() && fileInfo.Name()[:1] != "." {
 			addFileToArchive(path, path[len(fullRootPath+"/"):], tarWriter, fileInfo)
+		} else {
+			log.Debugf("Ignoring path %s", path)
 		}
 		return nil
 	})
 }
 
 func addFileToArchive(filePath string, addPath string, tarWriter *tar.Writer, fileInfo os.FileInfo) {
-	//println("Adding " + addPath + " (" + filePath + ")")
+	log.Debugf("Adding file %s", addPath)
 	fileReader, err := os.Open(filePath)
 	fail.Handle(err)
 	defer fileReader.Close()
