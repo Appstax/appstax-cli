@@ -10,6 +10,7 @@ import (
 type Config struct {
 	AppKey     string `json:"appKey"`
 	PublicDir  string `json:"publicDir"`
+	ServerDir  string `json:"serverDir"`
 	ApiBaseUrl string `json:"apiBaseUrl,omitempty"`
 }
 
@@ -24,6 +25,7 @@ func Write(values map[string]string) {
 	config := Read()
 	config.AppKey = values["AppKey"]
 	config.PublicDir = values["PublicDir"]
+	config.ServerDir = values["ServerDir"]
 	encoded, err := json.MarshalIndent(config, "", "    ")
 	fail.Handle(err)
 	ioutil.WriteFile(fileName, encoded, 0644)
@@ -39,5 +41,15 @@ func Read() Config {
 		err = json.Unmarshal(dat, &config)
 		fail.Handle(err)
 	}
+	insertDefaults(&config)
 	return config
+}
+
+func insertDefaults(config *Config) {
+	if config.PublicDir == "" {
+		config.PublicDir = "./public"
+	}
+	if config.ServerDir == "" {
+		config.ServerDir = "./server"
+	}
 }

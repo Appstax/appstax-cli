@@ -16,8 +16,8 @@ func useOptions(c *cli.Context) {
 	apiclient.SetBaseUrl(c.GlobalString("baseurl") + c.String("baseurl"))
 }
 
-func writeConfig(app account.App, publicDir string) {
-	config.Write(map[string]string{"AppKey": app.AppKey, "PublicDir": publicDir})
+func writeConfig(app account.App, publicDir string, serverDir string) {
+	config.Write(map[string]string{"AppKey": app.AppKey, "PublicDir": publicDir, "ServerDir": serverDir})
 }
 
 func writeSession(sessionID string, userID string, accountID string) {

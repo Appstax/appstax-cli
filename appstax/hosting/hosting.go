@@ -18,7 +18,12 @@ func UploadStatic(archivePath string, progressWriter io.Writer) error {
 	return err
 }
 
-func PrepareArchive(rootPath string) (string, int64) {
+func UploadServer(archivePath string, progressWriter io.Writer) error {
+	_, _, err := apiclient.PostFile(apiclient.Url("/appstax/hosting/server/code"), archivePath, progressWriter)
+	return err
+}
+
+func PrepareArchive(rootPath string) (string, int64, error) {
 	file, err := ioutil.TempFile("", "")
 	fail.Handle(err)
 	defer file.Close()
@@ -32,7 +37,10 @@ func PrepareArchive(rootPath string) (string, int64) {
 
 	fullRootPath, err := filepath.Abs(rootPath)
 	fail.Handle(err)
-	addAllToArchive(fullRootPath, tarWriter)
+	err = addAllToArchive(fullRootPath, tarWriter)
+	if err != nil {
+		return "", 0, err
+	}
 
 	tarWriter.Close()
 	gzipWriter.Close()
@@ -41,15 +49,20 @@ func PrepareArchive(rootPath string) (string, int64) {
 
 	fileInfo, err := os.Stat(file.Name())
 	fail.Handle(err)
-	return file.Name(), fileInfo.Size()
+	return file.Name(), fileInfo.Size(), nil
 }
 
-func addAllToArchive(fullRootPath string, tarWriter *tar.Writer) {
+func addAllToArchive(fullRootPath string, tarWriter *tar.Writer) error {
 	log.Debugf("Creating archive by walking from root path %s", fullRootPath)
-	filepath.Walk(fullRootPath, func(path string, fileInfo os.FileInfo, err error) error {
-		fail.Handle(err)
+	return filepath.Walk(fullRootPath, func(path string, fileInfo os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 		if !fileInfo.IsDir() && fileInfo.Name()[:1] != "." {
-			addFileToArchive(path, path[len(fullRootPath+"/"):], tarWriter, fileInfo)
+			err := addFileToArchive(path, path[len(fullRootPath+"/"):], tarWriter, fileInfo)
+			if err != nil {
+				return err
+			}
 		} else {
 			log.Debugf("Ignoring path %s", path)
 		}
@@ -57,11 +70,13 @@ func addAllToArchive(fullRootPath string, tarWriter *tar.Writer) {
 	})
 }
 
-func addFileToArchive(filePath string, addPath string, tarWriter *tar.Writer, fileInfo os.FileInfo) {
+func addFileToArchive(filePath string, addPath string, tarWriter *tar.Writer, fileInfo os.FileInfo) error {
 	addPath = filepath.ToSlash(addPath)
 	log.Debugf("Adding file %s from %s", addPath, filePath)
 	fileReader, err := os.Open(filePath)
-	fail.Handle(err)
+	if err != nil {
+		return err
+	}
 	defer fileReader.Close()
 
 	header := new(tar.Header)
@@ -73,5 +88,5 @@ func addFileToArchive(filePath string, addPath string, tarWriter *tar.Writer, fi
 	err = tarWriter.WriteHeader(header)
 	fail.Handle(err)
 	_, err = io.Copy(tarWriter, fileReader)
-	fail.Handle(err)
+	return err
 }

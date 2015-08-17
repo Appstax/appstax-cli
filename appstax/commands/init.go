@@ -25,12 +25,13 @@ func DoInit(c *cli.Context) {
 
 	tpl := selectTemplate()
 
-	pub := "./public"
+	publicDir := "./public"
+	serverDir := "./server"
 	if tpl.Name == "none" {
 		term.Section()
-		pub = selectPublicDir()
+		publicDir = selectPublicDir()
 	}
-	writeConfig(app, pub)
+	writeConfig(app, publicDir, serverDir)
 
 	if !strings.HasPrefix(tpl.Name, "ios/") {
 		createPublicDir()
