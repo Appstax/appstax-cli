@@ -100,6 +100,16 @@ func Get(url string) ([]byte, *http.Response, error) {
 	return handleResult(resp, err)
 }
 
+func Delete(url string) ([]byte, *http.Response, error) {
+	log.Debugf("HTTP DELETE: %s", url)
+	client := &http.Client{}
+	req, err := http.NewRequest("DELETE", url, nil)
+	addHeaders(req)
+	resp, err := client.Do(req)
+	fail.Handle(err)
+	return handleResult(resp, err)
+}
+
 func ParseStringMap(data []byte) map[string]string {
 	var result map[string]string
 	json.Unmarshal(data, &result)

@@ -23,6 +23,16 @@ func UploadServer(archivePath string, progressWriter io.Writer) error {
 	return err
 }
 
+func CreateServer() error {
+	_, _, err := apiclient.Post(apiclient.Url("/appstax/hosting/server"), "")
+	return err
+}
+
+func DeleteServer() error {
+	_, _, err := apiclient.Delete(apiclient.Url("/appstax/hosting/server"))
+	return err
+}
+
 func PrepareArchive(rootPath string) (string, int64, error) {
 	file, err := ioutil.TempFile("", "")
 	fail.Handle(err)

@@ -63,8 +63,14 @@ func setupCli() *cli.App {
 			Flags:  app.Flags,
 		},
 		{
+			Name:   "server",
+			Usage:  "Manage your server code",
+			Action: commands.DoServer,
+			Flags:  app.Flags,
+		},
+		{
 			Name:   "deploy",
-			Usage:  "Deploy local files to <yourapp>.appstax.io",
+			Usage:  "Deploy files to <yourapp>.appstax.io",
 			Action: commands.DoDeploy,
 			Flags:  app.Flags,
 		},
