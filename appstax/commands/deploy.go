@@ -34,8 +34,9 @@ func deployPublic() {
 	progress := term.ShowProgressBar(bytes)
 	err := hosting.UploadStatic(archive, progress)
 	if err != nil {
+		progress.Finish()
 		term.Section()
-		term.Println(err.Error())
+		term.Println("Error deploying public files: "+err.Error())
 	} else {
 		progress.Finish()
 		term.Section()
@@ -61,10 +62,11 @@ func deployServer() {
 	term.Printf("Uploading %.2f MB...\n", float64(bytes)/(1024.0*1024.0))
 	progress := term.ShowProgressBar(bytes)
 
-	hosting.UploadServer(archive, progress)
+	err = hosting.UploadServer(archive, progress)
 	if err != nil {
+		progress.Finish()
 		term.Section()
-		term.Println(err.Error())
+		term.Println("Error deploying server: "+err.Error())
 	} else {
 		progress.Finish()
 		term.Section()
