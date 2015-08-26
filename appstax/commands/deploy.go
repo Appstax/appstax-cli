@@ -21,7 +21,7 @@ func DoDeploy(c *cli.Context) {
 
 func deployPublic() {
 	selectSubdomainIfNeeded()
-	dir := config.Read().PublicDir
+	dir := config.ResolvePath(config.Read().PublicDir)
 	term.Section()
 	if !directoryExists(dir) {
 		term.Println("Directory does not exist: "+dir)
@@ -45,7 +45,7 @@ func deployPublic() {
 }
 
 func deployServer() {
-	dir := config.Read().ServerDir
+	dir := config.ResolvePath(config.Read().ServerDir)
 	term.Section()
 	if !directoryExists(dir) {
 		term.Println("Directory does not exist: "+dir)

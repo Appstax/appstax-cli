@@ -5,6 +5,9 @@ import (
 	"appstax-cli/appstax/log"
 	"encoding/json"
 	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
 type Config struct {
@@ -17,8 +20,36 @@ type Config struct {
 const fileName = "appstax.conf"
 
 func Exists() bool {
-	_, err := ioutil.ReadFile(fileName)
-	return err == nil
+	return FilePath() != ""
+}
+
+func FilePath() (string) {
+	dir, err := filepath.Abs(".")
+	if err != nil {
+		return ""
+	}
+	tried := make([]string, 0)
+	for {
+		path := filepath.Join(dir, fileName)
+		tried = append(tried, path)
+		_, err := os.Stat(path)
+		if err == nil {
+			return path
+		}
+		if len(dir) <= 3 {
+			log.Warnf("Cound not find appstax.conf. Searched paths: %s", strings.Join(tried, ", "))
+			return ""
+		}
+		dir = filepath.Dir(dir)
+	}
+}
+
+func RootDir() string {
+	return filepath.Dir(FilePath())
+}
+
+func ResolvePath(path string) string {
+	return filepath.Join(RootDir(), path)
 }
 
 func Write(values map[string]string) {
@@ -34,7 +65,7 @@ func Write(values map[string]string) {
 
 func Read() Config {
 	var config Config
-	dat, err := ioutil.ReadFile(fileName)
+	dat, err := ioutil.ReadFile(FilePath())
 	if err != nil {
 		log.Debugf("Could not find appstax.conf")
 	} else {

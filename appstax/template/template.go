@@ -77,7 +77,7 @@ func Install(template Template) {
 	log.Debugf("Downloaded release path: %s", releasePath)
 
 	sourcePath := filepath.Join(releasePath, template.SourcePath)
-	copy(sourcePath, template.DestinationPath)
+	copy(sourcePath, config.ResolvePath(template.DestinationPath))
 	insertAppKey(template)
 }
 
@@ -85,12 +85,13 @@ func insertAppKey(template Template) {
 	if template.AppKeyInFile == "" {
 		return
 	}
-	bytes, err := ioutil.ReadFile(template.AppKeyInFile)
+	path := config.ResolvePath(template.AppKeyInFile)
+	bytes, err := ioutil.ReadFile(path)
 	fail.Handle(err)
 	text := string(bytes)
 
 	text = strings.Replace(text, "<<appstax-app-key>>", config.Read().AppKey, -1)
-	err = ioutil.WriteFile(template.AppKeyInFile, []byte(text), 0644)
+	err = ioutil.WriteFile(path, []byte(text), 0644)
 	fail.Handle(err)
 }
 

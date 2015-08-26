@@ -9,7 +9,7 @@ import (
 
 func DoServe(c *cli.Context) {
 	useOptions(c)
-	publicDir := config.Read().PublicDir
+	publicDir := config.ResolvePath(config.Read().PublicDir)
 	term.Println("Serving your public directory at http://localhost:9000/")
 	term.Println("Press Ctrl-C to stop.")
 	term.Section()
