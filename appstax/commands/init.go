@@ -44,12 +44,16 @@ func DoInit(c *cli.Context) {
 		term.Println("Done.")
 	}
 
-	term.Section()
-	selectSubdomain(app.AppID, false)
+	if !strings.HasPrefix(tpl.Name, "ios/") {
+		term.Section()
+		selectSubdomain(app.AppID, false)
+	}
 
 	term.Section()
 	term.Println("All done!")
-	term.Println("Now run 'appstax deploy' when you are ready to upload your public files.")
+	if !strings.HasPrefix(tpl.Name, "ios/") {
+		term.Println("Now run 'appstax deploy' when you are ready to upload your public files.")
+	}
 }
 
 func selectApp() (account.App, error) {
