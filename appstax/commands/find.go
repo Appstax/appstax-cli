@@ -59,6 +59,9 @@ func propertyAsString(property interface{}) string {
 	if floatValue, ok := property.(float64); ok {
 		return strconv.FormatFloat(floatValue, 'f', -1, 64)
 	}
+	if boolValue, ok := property.(bool); ok {
+		return strconv.FormatBool(boolValue)
+	}
 	if mapValue, ok := property.(map[string]interface{}); ok {
 		dataType, ok := mapValue["sysDatatype"].(string)
 		if ok && dataType == "file" {

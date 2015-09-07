@@ -131,7 +131,7 @@ func makeSchemaProperty(ptype string) map[string]interface{} {
 
 func isValidType(t string) bool {
 	switch t {
-	case "string", "number", "file":
+	case "string", "number", "boolean", "file":
 		return true
 	default:
 		return false
