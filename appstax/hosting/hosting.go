@@ -7,6 +7,7 @@ import (
 	"archive/tar"
 	"bufio"
 	"compress/gzip"
+	"encoding/json"
 	"io"
 	"io/ioutil"
 	"os"
@@ -31,6 +32,15 @@ func CreateServer() error {
 func DeleteServer() error {
 	_, _, err := apiclient.Delete(apiclient.Url("/appstax/hosting/server"))
 	return err
+}
+
+func GetServerStatus() (ServerStatus, error) {
+	var status ServerStatus
+	result, _, err := apiclient.Get(apiclient.Url("/appstax/hosting/server"))
+	if err == nil {
+		err = json.Unmarshal(result, &status)
+	}
+	return status, err
 }
 
 func PrepareArchive(rootPath string) (string, int64, error) {
