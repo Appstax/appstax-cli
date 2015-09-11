@@ -14,9 +14,25 @@ func DoDeploy(c *cli.Context) {
 		term.Println("Can't find appstax.conf. Run 'appstax init' to initialize before deploying.")
 		return
 	}
+
+	args := c.Args()
+	if len(args) == 0 {
+		term.Println("Too few arguments. Usage: appstax deploy server|public|all")
+		return
+	}
+	target := args[0]
+
 	loginIfNeeded()
-	deployPublic()
-	deployServer()
+
+	switch target {
+	case "public":
+		deployPublic()
+	case "server":
+		deployServer()
+	case "all":
+		deployPublic()
+		deployServer()
+	}
 }
 
 func deployPublic() {
