@@ -36,6 +36,7 @@ func DoFind(c *cli.Context) {
 
 	columns := collection.SortedColumnNames()
 	rows := objectsAsStringTable(columns, objects)
+	term.Layout(false)
 	term.PrintTable(columns, rows)
 }
 

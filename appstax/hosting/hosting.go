@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 )
 
 func UploadStatic(archivePath string, progressWriter io.Writer) error {
@@ -47,6 +48,12 @@ func GetServerStatus() (ServerStatus, error) {
 		err = json.Unmarshal(result, &status)
 	}
 	return status, err
+}
+
+func GetServerLog(lines int64) (string, error) {
+	linesArg := strconv.FormatInt(lines, 10)
+	result, _, err := apiclient.Get(apiclient.Url("/appstax/hosting/server/logs?nlines=%s", linesArg))
+	return string(result), err
 }
 
 func PrepareArchive(rootPath string) (string, int64, error) {

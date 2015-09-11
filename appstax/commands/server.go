@@ -5,6 +5,7 @@ import (
 	"appstax-cli/appstax/hosting"
 	"appstax-cli/appstax/term"
 	"github.com/codegangsta/cli"
+	"strconv"
 )
 
 func DoServer(c *cli.Context) {
@@ -17,7 +18,7 @@ func DoServer(c *cli.Context) {
 	
 	args := c.Args()
 	if len(args) == 0 {
-		term.Println("Too few arguments. Usage: appstax server create|delete|status|start|stop")
+		term.Println("Too few arguments. Usage: appstax server create|delete|status|start|stop|log")
 		return
 	}
 
@@ -61,6 +62,22 @@ func DoServer(c *cli.Context) {
 			term.Println("Server stopped!")
 		} else {
 			term.Println("Error stopping server:")
+			term.Println(err.Error())
+		}
+	case "log", "logs":
+		nlines := int64(10)
+		if len(args) >= 2 {
+			n, err := strconv.ParseInt(args[1], 10, 64)
+			if err == nil {
+				nlines = n
+			}
+		}
+		log, err := hosting.GetServerLog(nlines)
+		if err == nil {
+			term.Layout(false)
+			term.Dump(log)
+		} else {
+			term.Println("Error getting server log:")
 			term.Println(err.Error())
 		}
 	default:

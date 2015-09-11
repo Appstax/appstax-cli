@@ -17,7 +17,7 @@ func main() {
 	log.Infof("Command to execute: %s", strings.Join(os.Args, " "))
 	term.Section()
 	cliApp.Run(os.Args)
-	term.Section()
+	term.PrintSection()
 }
 
 func setupCli() *cli.App {

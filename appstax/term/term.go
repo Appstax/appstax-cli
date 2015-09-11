@@ -13,40 +13,66 @@ import (
 	"github.com/keronsen/tablewriter"
 )
 
-const indent = "   "
-
+var layout = true
+var indent = "   "
 var section = false
 
 func Section() {
-	if !section {
-		section = true
+	section = true
+}
+
+func PrintSection() {
+	section = true
+	printSection()
+}
+
+func Layout(flag bool) {
+	layout = flag
+}
+
+func printSection() {
+	if layout && section {
 		fmt.Println("")
+		section = false
 	}
 }
 
+func printIndent() {
+	if layout {
+		fmt.Print(indent)
+	}
+}
+
+func Dump(value interface{}) {
+	fmt.Printf("%v", value)
+}
+
 func Println(text string) {
-	fmt.Println(indent + text)
-	section = false
+	printSection()
+	printIndent()
+	fmt.Println(text)
 }
 
 func Print(text string) {
-	fmt.Print(indent + text)
-	section = false
+	printSection()
+	printIndent()
+	fmt.Print(text)
 }
 
 func Printf(format string, a ...interface{}) {
-	fmt.Printf(indent+format, a...)
-	section = false
+	printSection()
+	printIndent()
+	fmt.Printf(format, a...)
 }
 
 func PrintTable(headers []string, rows [][]string) {
+	printSection()
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetAlignment(tablewriter.ALIGN_LEFT)
 	table.SetAutoFormatHeaders(false)
 	table.SetHeader(headers)
 	table.AppendBulk(rows)
 	table.Render()
-	section = false
 }
 
 func GetString(prompt string) string {
