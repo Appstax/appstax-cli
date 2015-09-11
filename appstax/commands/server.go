@@ -17,7 +17,7 @@ func DoServer(c *cli.Context) {
 	
 	args := c.Args()
 	if len(args) == 0 {
-		term.Println("Too few arguments. Usage: appstax server create|delete|status")
+		term.Println("Too few arguments. Usage: appstax server create|delete|status|start|stop")
 		return
 	}
 
@@ -45,6 +45,22 @@ func DoServer(c *cli.Context) {
 			term.Println("Server status: "+status.Status)
 		} else {
 			term.Println("Error getting server status:")
+			term.Println(err.Error())
+		}
+	case "start":
+		err := hosting.SendServerAction(operation)
+		if err == nil {
+			term.Println("Server started!")
+		} else {
+			term.Println("Error starting server:")
+			term.Println(err.Error())
+		}
+	case "stop":
+		err := hosting.SendServerAction(operation)
+		if err == nil {
+			term.Println("Server stopped!")
+		} else {
+			term.Println("Error stopping server:")
 			term.Println(err.Error())
 		}
 	default:

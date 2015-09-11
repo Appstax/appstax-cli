@@ -34,6 +34,12 @@ func DeleteServer() error {
 	return err
 }
 
+func SendServerAction(action string) error {
+	data := map[string]string{"action":action}
+	_, _, err := apiclient.Put(apiclient.Url("/appstax/hosting/server"), data)
+	return err
+}
+
 func GetServerStatus() (ServerStatus, error) {
 	var status ServerStatus
 	result, _, err := apiclient.Get(apiclient.Url("/appstax/hosting/server"))
