@@ -27,15 +27,12 @@ func DoInit(c *cli.Context) {
 
 	publicDir := "./public"
 	serverDir := "./server"
-	if tpl.Name == "none" {
-		term.Section()
-		publicDir = selectPublicDir()
-	}
 	writeConfig(app, publicDir, serverDir)
 
 	if !strings.HasPrefix(tpl.Name, "ios/") {
 		createPublicDir()
 	}
+	createServerDir()
 
 	if tpl.Name != "none" {
 		term.Section()
@@ -140,9 +137,9 @@ func selectSubdomain(appID string, required bool) {
 	log.Debugf("Subdomain app: %v", app)
 	for {
 		if required {
-			app.HostingSubdomain = term.GetString("Choose a *.appstax.io subdomain for web hosting")
+			app.HostingSubdomain = term.GetString("Choose a *.appstax.io subdomain for hosting")
 		} else {
-			term.Println("Choose a *.appstax.io subdomain for web hosting:")
+			term.Println("Choose a *.appstax.io subdomain for hosting:")
 			term.Println("(Leave this blank if you wish to decide this later.)")
 			app.HostingSubdomain = term.GetString("Subdomain")
 		}
@@ -176,3 +173,15 @@ func createPublicDir() {
 		log.Debugf("Not creating public directory. '%s' already exists.", dir)
 	}
 }
+
+func createServerDir() {
+	dir := config.Read().ServerDir
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		err = os.MkdirAll(dir, 0700)
+		fail.Handle(err)
+		log.Debugf("Created server directory '%s'", dir)
+	} else {
+		log.Debugf("Not creating server directory. '%s' already exists.", dir)
+	}
+}
+
