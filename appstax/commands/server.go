@@ -25,6 +25,7 @@ func DoServer(c *cli.Context) {
 	operation := args[0]
 	switch operation {
 	case "create":
+		selectSubdomainIfNeeded()
 		err := hosting.CreateServer()
 		if err == nil {
 			term.Println("Server created successfully!")
