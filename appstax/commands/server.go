@@ -26,7 +26,8 @@ func DoServer(c *cli.Context) {
 	switch operation {
 	case "create":
 		selectSubdomainIfNeeded()
-		err := hosting.CreateServer()
+		accessCode := term.GetString("Please enter early access code")
+		err := hosting.CreateServer(accessCode)
 		if err == nil {
 			term.Println("Server created successfully!")
 		} else {

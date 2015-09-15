@@ -25,8 +25,9 @@ func UploadServer(archivePath string, progressWriter io.Writer) error {
 	return err
 }
 
-func CreateServer() error {
-	_, _, err := apiclient.Post(apiclient.Url("/appstax/hosting/server"), "")
+func CreateServer(accessCode string) error {
+	data := map[string]string{"accessCode":accessCode}
+	_, _, err := apiclient.Post(apiclient.Url("/appstax/hosting/server"), data)
 	return err
 }
 
