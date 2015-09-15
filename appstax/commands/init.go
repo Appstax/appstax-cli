@@ -49,7 +49,7 @@ func DoInit(c *cli.Context) {
 	term.Section()
 	term.Println("All done!")
 	if !strings.HasPrefix(tpl.Name, "ios/") {
-		term.Println("Now run 'appstax deploy' when you are ready to upload your public files.")
+		term.Println("Now run 'appstax deploy' when you are ready to upload your files.")
 	}
 }
 

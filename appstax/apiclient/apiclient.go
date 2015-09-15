@@ -158,7 +158,7 @@ func getErrorMessage(resp *http.Response, body []byte, err error) string {
 	}
 
 	if message == "" {
-		message = "Ooops! Error communicating with appstax server."
+		message = "Error communicating with the Appstax servers."
 	}
 
 	return message
