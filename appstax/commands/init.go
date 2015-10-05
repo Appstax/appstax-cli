@@ -5,7 +5,6 @@ import (
 	"appstax-cli/appstax/config"
 	"appstax-cli/appstax/fail"
 	"appstax-cli/appstax/log"
-	"appstax-cli/appstax/session"
 	"appstax-cli/appstax/template"
 	"appstax-cli/appstax/term"
 	"fmt"
@@ -58,44 +57,20 @@ func selectApp() (account.App, error) {
 	selected := -1
 	if len(apps) == 0 {
 		term.Section()
-		term.Println("You have not created any apps yet! Create one now:")
+		term.Println("You have not created any apps yet!")
+		term.Println("Log in on https://appstax.com and create one before you proceed.")
 	} else {
 		term.Section()
-		term.Println("Choose which app to configure or create a new one:")
+		term.Println("Choose which app to configure:")
 		for i, app := range apps {
 			term.Printf("  %d) %s\n", i+1, app.AppName)
 		}
-		term.Printf("  %d) Create a new app\n", len(apps)+1)
 		term.Section()
-		for selected < 0 || selected > len(apps) {
-			selected = -1 + term.GetInt(fmt.Sprintf("Please select (1-%d)", len(apps)+1))
+		for selected < 0 || selected >= len(apps) {
+			selected = -1 + term.GetInt(fmt.Sprintf("Please select (1-%d)", len(apps)))
 		}
 	}
-	if selected >= 0 && selected < len(apps) {
-		return apps[selected], nil
-	} else {
-		return createApp()
-	}
-}
-
-func createApp() (account.App, error) {
-	app := account.App{}
-	term.Section()
-	app.AppName = term.GetString("App name")
-	app.AppDescription = term.GetString("Description")
-	app.AccountID = session.ReadAccountID()
-	app.PaymentPlan = "PROTOTYPE"
-
-	app, err := account.SaveNewApp(app)
-	if err != nil {
-		term.Section()
-		term.Println(err.Error())
-	} else {
-		term.Section()
-		term.Printf("Successfully created app '%s'\n", app.AppName)
-	}
-
-	return app, err
+	return apps[selected], nil
 }
 
 func selectTemplate() template.Template {
