@@ -97,8 +97,6 @@ func addAllToArchive(fullRootPath string, tarWriter *tar.Writer) error {
 			if err != nil {
 				return err
 			}
-		} else {
-			log.Debugf("Ignoring path %s", path)
 		}
 		return nil
 	})
@@ -106,14 +104,12 @@ func addAllToArchive(fullRootPath string, tarWriter *tar.Writer) error {
 
 func addFileToArchive(filePath string, addPath string, tarWriter *tar.Writer, fileInfo os.FileInfo) error {
 	addPath = filepath.ToSlash(addPath)
-	log.Debugf("Adding file %s from %s", addPath, filePath)
 
 	if isSymlink(fileInfo) {
 		link, err := filepath.EvalSymlinks(filePath)
 		if err != nil {
 			return err
 		}
-		log.Debugf("Dereferencing symlink %s -> %s", filePath, link)
 		filePath = link
 		fileInfo, err = os.Lstat(filePath)
 		if err != nil {
