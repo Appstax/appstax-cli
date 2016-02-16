@@ -88,12 +88,17 @@ func PrepareArchive(rootPath string) (string, int64, error) {
 
 func addAllToArchive(fullRootPath string, tarWriter *tar.Writer) error {
 	log.Debugf("Creating archive by walking from root path %s", fullRootPath)
-	return filepath.Walk(fullRootPath, func(path string, fileInfo os.FileInfo, err error) error {
+	return addDirToArchive(fullRootPath, "", tarWriter)
+}
+
+func addDirToArchive(fullDirPath string, addPrefix string, tarWriter *tar.Writer) error {
+	return filepath.Walk(fullDirPath, func(path string, fileInfo os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
+		
 		if !fileInfo.IsDir() && fileInfo.Name()[:1] != "." {
-			err := addFileToArchive(path, path[len(fullRootPath+"/"):], tarWriter, fileInfo)
+			err := addFileToArchive(path, addPrefix + path[len(fullDirPath+"/"):], tarWriter, fileInfo)
 			if err != nil {
 				return err
 			}
@@ -104,34 +109,48 @@ func addAllToArchive(fullRootPath string, tarWriter *tar.Writer) error {
 
 func addFileToArchive(filePath string, addPath string, tarWriter *tar.Writer, fileInfo os.FileInfo) error {
 	addPath = filepath.ToSlash(addPath)
+	var skip = false
 
 	if isSymlink(fileInfo) {
+		log.Debugf("Found symlink %v", filePath)
+
 		link, err := filepath.EvalSymlinks(filePath)
 		if err != nil {
 			return err
 		}
 		filePath = link
+
 		fileInfo, err = os.Lstat(filePath)
 		if err != nil {
 			return err
 		}
+
+		if fileInfo.IsDir() {
+			log.Debugf("Symlink is dir %s", filePath)
+			skip = true
+			addDirToArchive(filePath, addPath + "/", tarWriter)
+		}
 	}
 
-	header := new(tar.Header)
-	header.Name = addPath
-	header.Size = fileInfo.Size()
-	header.Mode = int64(fileInfo.Mode())
-	header.ModTime = fileInfo.ModTime()
+	if !skip {
+		header := new(tar.Header)
+		header.Name = addPath
+		header.Size = fileInfo.Size()
+		header.Mode = int64(fileInfo.Mode())
+		header.ModTime = fileInfo.ModTime()
 
-	fileReader, err := os.Open(filePath)
-	if err != nil {
-		return err
+		fileReader, err := os.Open(filePath)
+		if err != nil {
+			return err
+		}
+		defer fileReader.Close()
+		err = tarWriter.WriteHeader(header)
+		fail.Handle(err)
+		_, err = io.Copy(tarWriter, fileReader)	
+		return err	
 	}
-	defer fileReader.Close()
-	err = tarWriter.WriteHeader(header)
-	fail.Handle(err)
-	_, err = io.Copy(tarWriter, fileReader)
-	return err	
+
+	return nil
 }
 
 func isSymlink(fileInfo os.FileInfo) bool {
